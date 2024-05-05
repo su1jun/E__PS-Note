@@ -1,31 +1,34 @@
 import sys
 input = sys.stdin.readline
+sys.setrecursionlimit(10**6)
+
+def dfs(n):
+    global team_no
+
+    visited[n] = True
+    team.append(n)
+
+    if visited[arr[n]] == True:
+        if arr[n] in team:
+            team_no -= len(team[team.index(arr[n]):])
+        return
+
+    else:
+        dfs(arr[n])
 
 T = int(input())
 
-def dfs(i):
-    global team_no
-
-    visited[i] = True
-    team.append(i)
-    select = selected[i]
-
-    if visited[select]:
-        if select in team:
-            team_no += len(team[team.index(select):])
-    else:
-        dfs(select)
-
 for _ in range(T):
     N = int(input())
-    selected = [0] + list(map(int, input().split()))
 
-    visited = [False] * (N+1)
-    team_no = 0
+    arr = [0]
+    arr.extend([int(x) for x in input().rstrip().split()])
 
-    for i in range(1, N+1):
+    visited = [False] * (N + 1)
+    team_no = N
+    for i in range(1, N + 1):
         if not visited[i]:
             team = []
             dfs(i)
 
-    print(N - team_no)
+    print(team_no)
