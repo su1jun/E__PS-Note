@@ -1,43 +1,60 @@
-import sys
+import sys, heapq
 input = sys.stdin.readline
-
 INF = int(1e9)
 
+# kruskal algorithm
+# def find(x):
+#     if parent[x] == x: return x
+#     else:
+#         parent[x] = find(parent[x])
+#         return parent[x]
+
+# def union(a, b):
+#     ar, br = find(a), find(b)
+
+#     if ar != br:
+#         if ar < br: parent[br] = ar
+#         else:
+#             parent[ar] = br
+#         return True
+#     return False
+
+# V, E = map(int, input().split())
+# parent = [i for i in range(V+1)]
+# anwser = 0
+# arr = [list(map(int, input().split())) for _ in range(E)]
+
+# arr.sort(key=lambda x : x[2])
+
+# for a, b, c in arr:
+#     if union(a, b):
+#         anwser += c
+
+# print(anwser)
+
+# prim algorithm
 V, E = map(int, input().split())
-visited = [0] * (V+1)
-graph = [[0] * V+1 for _ in range(V+1)]
+graph = [[] for _ in range(V+1)]
+visited = [False] * (V+1)
+heap = [[0, 1]]
+anwser = 0
+cnt = 0
 
-for _ in range(V):
+for _ in range(E):
     a, b, c = map(int, input().split())
-    graph[a][b] = c
+    graph[a].append((c, b))
+    graph[b].append((c, a))
 
-answer = INF
+while heap:
+    if cnt == V: break
 
-def dfs(node):
-    global answer
-    if node == V:
-        answer = min(answer, sum(visited))
-        return
-    for i in range(1, V+1):
-        if graph[node][i] and not visited[i]:
-            visited[i] = 1
-            dfs(i)
-            visited[i] = 0
+    cost, node = heapq.heappop(heap)
+    if visited[node]: continue
 
-parent = [i for i in range(V+1)]
+    visited[node] = True
+    anwser += cost
+    cnt += 1
+    for temp in graph[node]:
+        heapq.heappush(heap, temp)
 
-def find(x):
-    if parent[x] == x: return x
-    else:
-        parent[x] = find(parent[x])
-        return parent[x]
-
-def union(a, b):
-    a, b = find(a), find(b)
-
-    if a < b: parent[b] = a
-    else:
-        parent[a] = b        
-
-def same_parent(a, b):
-    return find(a) == find(b)
+print(anwser)
